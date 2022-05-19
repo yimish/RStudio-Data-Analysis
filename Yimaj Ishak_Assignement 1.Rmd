@@ -1,0 +1,160 @@
+---
+title: "STAC32 Assignment 1"
+output:
+  html_document:
+    df_print: paged
+---
+
+## Packages for Assignment 1
+  - To work with the following data and complete the accompanying questions the tidyverse package must be loaded.
+
+```{r}
+library(tidyverse)
+```
+
+## Question 1
+
+## Our Data
+- Annual rainfall data for the Davis, California area (1951-1997)
+- Variables:
+  - Categorical: none
+  - Quantitative: rainfall (value of the given year)
+- The data is a text file with the values separated by spaces.
+
+## Our Goals
+- Evaluate the claim by a wastewater facility in Davis, California that the odour produced from its systems is caused by "unprecedented" amount of rainfall this year (1997) "at 170 to 180 percent normal levels".
+- Display year rainfall data and illustrate its trends.
+
+## Part (a)
+- Read in and display (some of) the data.
+  - The data is a text file with values separated by spaces.
+  - This will require the use of `read_delim` to be displayed appropriately.
+
+```{r}
+rainfall_url <- "http://ritsokiguess.site/STAC32/rainfall.txt"
+rainfall <- read_delim(rainfall_url, " ")
+rainfall
+```
+
+## Part (b)
+- Summarize the data frame (as done in Lecture 2).
+  - The function `summary()` can be used in this situation to provide us with a five number summary of the rainfall data.
+
+```{r}
+summary(rainfall)
+```
+
+## Part (c)
+- Make a suitable plot of the rainfall values. (We are not, for the time being, concerned about the
+years.
+  - This rainfall data contains zero categorical variables, and one quantitative variable (rainfall).
+  - Therefore the most suitable plot is a histogram.
+  - A histogram can be built utilising the `ggplot()` function
+  
+```{r}
+ggplot(rainfall, aes(x = Rainfall)) + geom_histogram(bins = 8)
+```
+
+* bins value of 8 was chosen as it was the best for adequately illustrating the rainfall trend while also ensuring that the histogram had no gaps and was continuous.
+
+## Part (d)
+- How would you describe the shape of the distribution of rainfall values?
+  - I would describe the shape of the rainfall values as seen in the above histogram to be right-skewed.
+
+## Part (e)
+- In the quote at the beginning of the question, where do you think the assertion that the 1997 rainfall was “at 170 to 180 percent of its normal level” came from? Explain briefly.
+  - It is likely that this assertion was made from comparing the 1997's rainfall of 29.69 to the median rainfall number between the years 1951-1997.
+  - The rainfall of 1997 can be found within the data set, and the median rainfall is found from the five number summary within part (b).
+  - The 1997 rainfall of 29.69 is about 180% higher than the median of 16.72.
+
+```{r}
+rainfall_1997 <- 29.69
+rainfall_median <- 16.72
+(rainfall_1997/rainfall_median)*100
+```
+
+- The 1997 rainfall of 29.69 is about 180% higher than the median of 16.72.
+
+## Part (f)
+- Do you think the official’s calculation was reasonable? Explain briefly. (Note that this is not the same as asking whether the official’s calculation was correct. This is an important distinction for you to make.)
+  - Yes it is a reasonable calculation to compare a certain data point to the median of the data set in an effort to gauge the data points position comparatively to the data set as a whole.
+
+## Part (g)
+- Do you think that the official was right to use the word “unprecedented” to describe the 1997 rainfall? Justify your answer briefly.
+  - No I don't believe this is a reasonable assertion. There have been rainfalls higher than the 1997's 29.69 in the past. As well 29.69 is not a statistical outlier when compared to the rainfall data between 1951-1997.
+  - Outliers can be described statistically as being larger than Q3 plus 1.5x the interquartile range (IQR) of the dataset, or smaller than Q1 subtracted by 1.5x the IQR.
+  - Utilising the five summary numbers from part (b) we can evaluate if the rainfall of 1997 is a statistical outlier or in other words, unprecedentedly high.
+
+The fence for a high statistical outlier rainfall value is...
+```{r}
+Q1 <- 12.3
+Q3 <- 25.21
+IQR <- Q3-Q1
+Unprecedentedly_High_Statistical_Outlier_Fence <- Q3+(1.5*IQR)
+Unprecedentedly_High_Statistical_Outlier_Fence
+```
+  - For a given years rainfall to be "unprecedentedly high" it needs to be greater than the `Unprecedentedly_High_Statistical_Outlier_Fence` or 44.575
+  - 1997's rainfall of 29.69 is not higher than 44.575, therefore it is not an outlier within this given rainfall dataset.
+
+## Question 2
+
+## Our Data
+- Minutes per week spent exercising of male and female statistics students.
+- Variables:
+  - Categorical: gender
+  - Quantitative: minutes (per week spent exercising)
+- The data is a text file with the values aligned in columns as a table
+
+## Our Goals
+- Compare the amount of time spent exercising per week between male and female statistics students.
+- Display the minutes spent exercising per week for male and female statistics students and illustrate its trends.
+
+## Part (a)
+- Take a look at the data file. How is it laid out?
+  - The data is a text file with the values aligned in columns as a table.
+  - The table has 2 columns and 29 rows
+
+## Part (b)
+- Read in and display (some of) the data. (This means to display enough of what you read in to convince others that you read in the right kind of thing.)
+  - The data is a text file with the values aligned in columns as a table.
+  - This will require the use of `read_table` for the data to be displayed appropriately.
+
+```{r}
+exercise_url <- ("http://ritsokiguess.site/STAC32/exercise.txt")
+exercise <- read_table(exercise_url)
+exercise
+```
+
+## Part (c)
+- Make a suitable plot of this data frame.
+  - This data of the students exercise contains one categorical variable (students gender), and one quantitative variable (minutes per week spent exercising).
+  - Therefore the most suitable plot is a side-by-side boxplot
+  - A side-by-side boxplot can be built utilising the `ggplot()` function
+  
+```{r}
+ggplot(exercise, aes(x = gender, y = minutes)) + geom_boxplot()
+```
+
+## Part (d)
+- Does there appear to be any substantial difference in the average amount of time that males and females spend exercising? Explain briefly. (“average” could be mean or median. Which is it here?)
+  - There does not appear to be a major difference in the average time spent exercising between the males and females. 
+  - When comparing the time spent exercising between males and females through the above side-by-side boxplot you can see the median line within both boxes seem to be around the same place.
+
+*It is also possible show this numerically by calculating the five number summary of each group separately.
+```{r}
+by(exercise, exercise$gender, summary)
+```
+- Females have a median time spent exercising per week of 190, and the males have a median time spent exercising per week of 180.
+- Again showing no substantial difference in exercise time between genders.
+
+## Part (e)
+- How do you know that both distributions, for males as well as females, are skewed to the right? Explain (very) briefly
+  - The top (right) whisker for both box plots from part (c) are longer than the bottom whisker.
+  - An elongated top whisker is comparative to a lengthy right tail on a distribution curve.
+  - This indicates a right skew in the data.
+
+## Part (f)
+- For data like this, why does it make practical sense that the distributions are skewed to the right?
+  - In data like this where the smallest data point is 0, and there are multiple entries of it, its likely that there will be a right or positive skew. The weight of multiple zeros will drag the average down and ultimately lead to the skew in the higher positive numbers. 
+  - In a survey of exercise minutes of students it is practical to assume that there are more sedentary students than exercise-focused ones as many students would put their studies before taking exceptional effort to exercise.
+    - As well the few who do take their health more seriously will cause right/ positive skew that we can see.
